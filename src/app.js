@@ -11,7 +11,7 @@ const storage = require("node-persist");
 const getToken = require("./endpoints/getToken");
 const getUsers = require("./endpoints/getUsers");
 
-storage.init();
+storage.init({ dir: `${process.env.STORAGE_DIR}/node-persist/storage` });
 
 const app = express();
 const server = http.createServer(app);
