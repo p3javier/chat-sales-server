@@ -10,6 +10,7 @@ const { expressjwt } = require("express-jwt");
 const storage = require("node-persist");
 const getToken = require("./endpoints/getToken");
 const getUsers = require("./endpoints/getUsers");
+const getMessagesAvailable = require("./services/node-persist");
 
 storage.init({ dir: `${process.env.STORAGE_DIR}/node-persist/storage` });
 
@@ -69,10 +70,21 @@ io.on("connection", (socket) => {
 
   socket.on("message", async (data) => {
     console.log("Message received:", data);
+    const messagesAvailable = await getMessagesAvailable(
+      storage,
+      socket.user.id
+    );
+    console.log("Messages available:", messagesAvailable);
+    if (messagesAvailable <= 1) {
+      console.log("No messages available");
+      io.emit("message", { error: "Zero messages left" });
+      return;
+    }
     try {
       const response = await museAIChat(data);
       const jsonResponse = await response.json();
       console.log("Response from Muse.AI:", jsonResponse);
+      await storage.setItem(socket.user.id, messagesAvailable - 1);
       io.emit("message", jsonResponse.response); // Broadcast the message to all connected clients
     } catch (error) {
       console.error("Error:", error);
