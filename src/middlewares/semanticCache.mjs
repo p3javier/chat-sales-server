@@ -10,7 +10,7 @@ const index = new Index({
 });
 
 // 👇 your semantic cache
-const semanticCache = new SemanticCache({ index, minProximity: 0.75 });
+const semanticCache = new SemanticCache({ index, minProximity: 0.85 });
 
 export const getSemantic = async (question) => {
   const result = await semanticCache.get(question);
