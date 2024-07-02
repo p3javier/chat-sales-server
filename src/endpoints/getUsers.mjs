@@ -9,4 +9,4 @@ const getUsers = async (req, res, storage) => {
   res.status(200).json(users);
 };
 
-module.exports = getUsers;
+export default getUsers;

@@ -1,5 +1,7 @@
+import dotenv from "dotenv";
+dotenv.config();
 const secretKey = process.env.SECRET_KEY;
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 // Middleware to verify JWT token
 const verifyToken = (token) => {
@@ -11,4 +13,4 @@ const verifyToken = (token) => {
   }
 };
 
-module.exports = verifyToken;
+export default verifyToken;

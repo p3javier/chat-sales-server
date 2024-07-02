@@ -1,20 +1,28 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-require("dotenv").config();
-const cors = require("cors");
-const { museAIChat } = require("./services/muse.ai");
-const getVideo = require("./endpoints/getVideo");
-const verifyToken = require("./middlewares/verifyToken");
-const { expressjwt } = require("express-jwt");
-const storage = require("node-persist");
-const getToken = require("./endpoints/getToken");
-const getUsers = require("./endpoints/getUsers");
-const getMessagesAvailable = require("./services/node-persist");
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import dotenv from "dotenv";
+import cors from "cors";
+import { museAIChat } from "./services/muse.ai.mjs";
+import getVideo from "./endpoints/getVideo.mjs";
+import verifyToken from "./middlewares/verifyToken.mjs";
+import { expressjwt } from "express-jwt";
+import storage from "node-persist";
+import getToken from "./endpoints/getToken.mjs";
+import getUsers from "./endpoints/getUsers.mjs";
+import { registerEmail } from "./endpoints/registerEmail.mjs";
+import getMessagesAvailable from "./services/node-persist.mjs";
+import bodyParser from "body-parser";
 
+dotenv.config();
+
+console.log("Secret key:", process.env.SECRET_KEY);
 storage.init({ dir: `${process.env.STORAGE_DIR}/node-persist/storage` });
 
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -50,7 +58,9 @@ app.get(
 
 app.get("/token", (req, res) => getToken(req, res, storage));
 
-app.get("/users", (req, res) => getUsers(req, res, storage));
+app.get("/users");
+
+app.post("/register", (req, res) => registerEmail(req, res, storage));
 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
@@ -82,10 +92,9 @@ io.on("connection", (socket) => {
     }
     try {
       const response = await museAIChat(data);
-      const jsonResponse = await response.json();
-      console.log("Response from Muse.AI:", jsonResponse);
+      console.log("Response from Muse.AI:", response);
       await storage.setItem(socket.user.id, messagesAvailable - 1);
-      io.emit("message", jsonResponse.response); // Broadcast the message to all connected clients
+      io.emit("message", response); // Broadcast the message to all connected clients
     } catch (error) {
       console.error("Error:", error);
       io.emit("message", { error: "An error occurred" });

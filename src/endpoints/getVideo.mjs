@@ -1,4 +1,4 @@
-const { getVideoData } = require("../services/muse.ai");
+import { getVideoData } from "../services/muse.ai.mjs";
 
 const getVideo = async (req, res) => {
   const { videoId } = req.params;
@@ -14,4 +14,4 @@ const getVideo = async (req, res) => {
   }
 };
 
-module.exports = getVideo;
+export default getVideo;
