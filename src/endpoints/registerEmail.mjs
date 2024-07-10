@@ -13,7 +13,11 @@ export const registerEmail = async (req, res, storage) => {
   }
   const numberOfChatMessages = 10;
   const expiresIn = "10d";
-  const token = await createToken({ numberOfChatMessages, expiresIn, storage });
+  const { token } = await createToken({
+    numberOfChatMessages,
+    expiresIn,
+    storage,
+  });
   await createUser(email, false, null);
   await sendVerificationEmail(email, token);
   res.status(200).json({ message: "Email registered" });

@@ -13,5 +13,5 @@ export const createToken = async ({
   const token = jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn });
   await storage.setItem(id, numberOfChatMessages, { ttl: ms(expiresIn) });
 
-  return token;
+  return { token, id };
 };

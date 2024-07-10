@@ -13,7 +13,11 @@ const getToken = async (req, res, storage) => {
   }
   const numberOfChatMessages = numberOfChatMessagesReceived || 10;
   const expiresIn = req.query.expiresIn || "1d";
-  const token = await createToken({ numberOfChatMessages, expiresIn, storage });
+  const { token, id } = await createToken({
+    numberOfChatMessages,
+    expiresIn,
+    storage,
+  });
   res.status(200).json({ token, "user-id": id, expiresIn });
 };
 

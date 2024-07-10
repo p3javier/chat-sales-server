@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=production node src/app.mjs",
     "dev": "nodemon src/app.mjs",
-    "dev:watch": "nodemon src/app.js --watch src"
+    "dev:watch": "nodemon src/app.mjs --watch src"
   },
   "keywords": [],
   "author": "",
