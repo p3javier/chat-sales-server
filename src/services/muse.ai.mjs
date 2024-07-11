@@ -20,7 +20,14 @@ export const museAIChat = async (data) => {
         cookie: `key=${process.env.MUSE_SESSION_KEY};`,
         "Referrer-Policy": "strict-origin-when-cross-origin",
       },
-      body: JSON.stringify({ history: [{ role: "user", content: message }] }),
+      body: JSON.stringify({
+        history: [
+          {
+            role: "user",
+            content: `A continuación verás una pregunta sobre el vídeo, si la pregunta es sobre algo que está en el vídeo, ademas de responder tienes que enviar el timestamp exacto donde se explica eso en el vídeo: ${message}`,
+          },
+        ],
+      }),
       method: "POST",
     });
     const jsonResponse = await response.json();
