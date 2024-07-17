@@ -13,6 +13,9 @@ import getUsers from "./endpoints/getUsers.mjs";
 import { registerEmail } from "./endpoints/registerEmail.mjs";
 import getMessagesAvailable from "./services/node-persist.mjs";
 import bodyParser from "body-parser";
+import { testAnthropic } from "./endpoints/testAnthropic.mjs";
+import { anthropicChat } from "./services/anthropic.mjs";
+import { injectContext } from "./utils/injectContext.mjs";
 
 dotenv.config();
 
@@ -62,6 +65,8 @@ app.get("/users");
 
 app.post("/register", (req, res) => registerEmail(req, res, storage));
 
+app.post("/test-anthropic", (req, res) => testAnthropic(req, res));
+
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   const decoded = verifyToken(token);
@@ -91,10 +96,12 @@ io.on("connection", (socket) => {
       return;
     }
     try {
-      const response = await museAIChat(data);
-      console.log("Response from Muse.AI:", response);
+      const { message, svid } = JSON.parse(data);
+      //const response = await museAIChat(data);
+      const response = await anthropicChat(injectContext(message));
+      console.log("Response from AI service:", response);
       await storage.setItem(socket.user.id, messagesAvailable - 1);
-      io.emit("message", response); // Broadcast the message to all connected clients
+      io.emit("message", response[0].text); // Broadcast the message to all connected clients
     } catch (error) {
       console.error("Error:", error);
       io.emit("message", { error: "An error occurred" });
