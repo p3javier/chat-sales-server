@@ -16,6 +16,7 @@ import bodyParser from "body-parser";
 import { testAnthropic } from "./endpoints/testAnthropic.mjs";
 import { anthropicChat } from "./services/anthropic.mjs";
 import { injectContext } from "./utils/injectContext.mjs";
+import { getRegisteredUsers } from "./endpoints/getRegisteredUsers.mjs";
 
 dotenv.config();
 
@@ -62,6 +63,8 @@ app.get(
 app.get("/token", (req, res) => getToken(req, res, storage));
 
 app.get("/users");
+
+app.get("/registered-users", (req, res) => getRegisteredUsers(req, res));
 
 app.post("/register", (req, res) => registerEmail(req, res, storage));
 
