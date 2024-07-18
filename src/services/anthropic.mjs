@@ -6,7 +6,7 @@ const anthropic = new Anthropic({
 });
 
 export const anthropicChat = async (question) => {
-  const responseFromSemantic = await getSemantic(message);
+  const responseFromSemantic = await getSemantic(question);
   if (!responseFromSemantic) {
     const message = await anthropic.messages.create({
       max_tokens: 1024,
